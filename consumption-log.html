@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consumption Log - Office Pantry Management System</title>
+    <link rel="stylesheet" href="consumption-log.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation Header -->
+    <header class="dashboard-header">
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="logo">
+                    <i class="fas fa-utensils"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>Office Pantry</h1>
+                    <span class="role-badge">Administrator</span>
+                </div>
+            </div>
+            
+            <nav class="header-nav">
+                <a href="admin-dashboard.html" class="nav-link">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Dashboard
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="fas fa-boxes"></i>
+                    Inventory
+                </a>
+                <a href="#" class="nav-link active">
+                    <i class="fas fa-clipboard-list"></i>
+                    Consumption Log
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="fas fa-users"></i>
+                    Users
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="fas fa-chart-line"></i>
+                    Reports
+                </a>
+            </nav>
+            
+            <div class="header-actions">
+                <div class="notification-bell">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-count" id="notificationCount">2</span>
+                </div>
+                <div class="user-profile">
+                    <img src="https://via.placeholder.com/40x40/667eea/ffffff?text=A" alt="Admin Avatar" class="avatar">
+                    <span class="user-name">Admin User</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="content-container">
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="page-title">
+                    <h2>Consumption Log</h2>
+                    <p class="page-subtitle">Track pantry item consumption and usage patterns</p>
+                </div>
+                <div class="page-actions">
+                    <button class="btn btn-secondary" id="viewHistoryBtn">
+                        <i class="fas fa-history"></i>
+                        View History
+                    </button>
+                    <button class="btn btn-primary" id="bulkEntryBtn">
+                        <i class="fas fa-plus-circle"></i>
+                        Bulk Entry
+                    </button>
+                </div>
+            </div>
+
+            <!-- Log Entry Form -->
+            <div class="log-form-container">
+                <div class="form-card">
+                    <div class="form-header">
+                        <h3>New Consumption Entry</h3>
+                        <div class="form-toggle">
+                            <label class="toggle-label">Entry Mode:</label>
+                            <div class="toggle-switch">
+                                <input type="radio" id="dailyMode" name="entryMode" value="daily" checked>
+                                <label for="dailyMode" class="toggle-option">Daily</label>
+                                <input type="radio" id="perVisitMode" name="entryMode" value="perVisit">
+                                <label for="perVisitMode" class="toggle-option">Per Visit</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form class="consumption-form" id="consumptionForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="itemSelect" class="form-label">
+                                    <i class="fas fa-box"></i>
+                                    Select Item
+                                    <span class="required">*</span>
+                                </label>
+                                <div class="select-wrapper">
+                                    <select id="itemSelect" name="item" class="form-select" required>
+                                        <option value="">Choose an item...</option>
+                                        <optgroup label="Beverages">
+                                            <option value="tea-bags">Tea Bags</option>
+                                            <option value="coffee-beans">Coffee Beans</option>
+                                            <option value="instant-coffee">Instant Coffee</option>
+                                            <option value="hot-chocolate">Hot Chocolate</option>
+                                        </optgroup>
+                                        <optgroup label="Snacks">
+                                            <option value="biscuits">Biscuits</option>
+                                            <option value="cookies">Cookies</option>
+                                            <option value="chips">Chips</option>
+                                            <option value="nuts">Nuts</option>
+                                        </optgroup>
+                                        <optgroup label="Other">
+                                            <option value="sugar">Sugar</option>
+                                            <option value="milk">Milk</option>
+                                            <option value="cream">Cream</option>
+                                            <option value="sweetener">Sweetener</option>
+                                        </optgroup>
+                                    </select>
+                                    <i class="fas fa-chevron-down select-icon"></i>
+                                </div>
+                                <div class="error-message" id="itemError"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="quantity" class="form-label">
+                                    <i class="fas fa-hashtag"></i>
+                                    Quantity
+                                    <span class="required">*</span>
+                                </label>
+                                <div class="input-wrapper">
+                                    <input type="number" 
+                                           id="quantity" 
+                                           name="quantity" 
+                                           class="form-input" 
+                                           min="1" 
+                                           max="999" 
+                                           step="1"
+                                           placeholder="Enter quantity"
+                                           required>
+                                    <div class="quantity-controls">
+                                        <button type="button" class="qty-btn" onclick="adjustQuantity(-1)">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                        <button type="button" class="qty-btn" onclick="adjustQuantity(1)">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="error-message" id="quantityError"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="consumptionDate" class="form-label">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    Date
+                                    <span class="required">*</span>
+                                </label>
+                                <div class="input-wrapper">
+                                    <input type="date" 
+                                           id="consumptionDate" 
+                                           name="consumptionDate" 
+                                           class="form-input" 
+                                           required>
+                                    <button type="button" class="date-btn" onclick="setToday()">
+                                        <i class="fas fa-calendar-day"></i>
+                                        Today
+                                    </button>
+                                </div>
+                                <div class="error-message" id="dateError"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="time" class="form-label">
+                                    <i class="fas fa-clock"></i>
+                                    Time
+                                </label>
+                                <div class="input-wrapper">
+                                    <input type="time" 
+                                           id="time" 
+                                           name="time" 
+                                           class="form-input">
+                                    <button type="button" class="time-btn" onclick="setCurrentTime()">
+                                        <i class="fas fa-clock"></i>
+                                        Now
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="consumedBy" class="form-label">
+                                    <i class="fas fa-user"></i>
+                                    Consumed By
+                                </label>
+                                <div class="select-wrapper">
+                                    <select id="consumedBy" name="consumedBy" class="form-select">
+                                        <option value="">Select user (optional)</option>
+                                        <option value="john-doe">John Doe</option>
+                                        <option value="jane-smith">Jane Smith</option>
+                                        <option value="mike-johnson">Mike Johnson</option>
+                                        <option value="sarah-wilson">Sarah Wilson</option>
+                                        <option value="guest">Guest User</option>
+                                    </select>
+                                    <i class="fas fa-chevron-down select-icon"></i>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="notes" class="form-label">
+                                    <i class="fas fa-sticky-note"></i>
+                                    Notes
+                                </label>
+                                <textarea id="notes" 
+                                          name="notes" 
+                                          class="form-textarea" 
+                                          placeholder="Additional notes (optional)"
+                                          rows="3"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary" onclick="clearForm()">
+                                <i class="fas fa-eraser"></i>
+                                Clear Form
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i>
+                                Log Consumption
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Recent Entries -->
+            <div class="recent-entries-container">
+                <div class="entries-card">
+                    <div class="entries-header">
+                        <h3>Recent Entries</h3>
+                        <div class="entries-controls">
+                            <select id="entriesFilter" class="filter-select">
+                                <option value="all">All Items</option>
+                                <option value="tea-bags">Tea Bags</option>
+                                <option value="coffee-beans">Coffee Beans</option>
+                                <option value="biscuits">Biscuits</option>
+                                <option value="cookies">Cookies</option>
+                            </select>
+                            <button class="btn btn-sm btn-secondary" onclick="refreshEntries()">
+                                <i class="fas fa-sync-alt"></i>
+                                Refresh
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="entries-list" id="entriesList">
+                        <!-- Entries will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="quick-stats-container">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-coffee"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h4>Today's Consumption</h4>
+                            <div class="stat-value" id="todayConsumption">0</div>
+                            <div class="stat-label">items consumed</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h4>This Week</h4>
+                            <div class="stat-value" id="weekConsumption">0</div>
+                            <div class="stat-label">total items</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-fire"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h4>Most Popular</h4>
+                            <div class="stat-value" id="mostPopular">-</div>
+                            <div class="stat-label">this week</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h4>Active Users</h4>
+                            <div class="stat-value" id="activeUsers">0</div>
+                            <div class="stat-label">this week</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Success/Error Messages -->
+    <div class="message-container" id="messageContainer"></div>
+
+    <!-- Bulk Entry Modal -->
+    <div class="modal" id="bulkEntryModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Bulk Entry</h3>
+                <button class="close-btn" onclick="closeBulkModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Enter multiple consumption entries at once:</p>
+                <div class="bulk-form">
+                    <div class="bulk-row">
+                        <select class="bulk-select">
+                            <option value="">Select Item</option>
+                            <option value="tea-bags">Tea Bags</option>
+                            <option value="coffee-beans">Coffee Beans</option>
+                            <option value="biscuits">Biscuits</option>
+                        </select>
+                        <input type="number" class="bulk-input" placeholder="Qty" min="1">
+                        <button class="btn btn-sm btn-danger" onclick="removeBulkRow(this)">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                <button class="btn btn-secondary" onclick="addBulkRow()">
+                    <i class="fas fa-plus"></i>
+                    Add Row
+                </button>
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" onclick="closeBulkModal()">Cancel</button>
+                    <button class="btn btn-primary" onclick="submitBulkEntry()">Submit All</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="consumption-log.js"></script>
+</body>
+</html>
+
+
